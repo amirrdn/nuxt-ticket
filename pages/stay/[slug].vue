@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div id="location-catalog" class="pt-4 pb-8" v-if="content">
+    <div id="location-catalog" class="pt-4 pb-8">
       <!-- Hero Image -->
-      <div class="flex flex-col sm:flex-row">
+      <div class="flex flex-col sm:flex-row" v-if="content.catalog">
         <div id="hero-image" class="flex justify-center sm:w-1/3">
           <div
             class="w-40 h-40 sm:w-48 sm:h-48 rounded-full overflow-hidden"
@@ -12,6 +12,7 @@
               :src="content.catalog?.hero_image_url.sm"
               alt="Fairmont Jakarta"
               class="w-full h-full object-cover"
+              @error="onImageError"
             />
           </div>
         </div>
@@ -67,14 +68,12 @@
             id="review-desktop"
             class="flex items-center mt-2 text-sm text-gray-700 mt-3"
           >
-            <!-- Donut Progress Bar -->
             <div class="relative w-10 h-10">
               <svg
                 class="rotate-[-65deg] size-full"
                 viewBox="0 0 36 36"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <!-- Background Circle (Gauge) -->
                 <circle
                   cx="18"
                   cy="18"
@@ -85,8 +84,6 @@
                   :stroke-dasharray="content.catalog.review_rating"
                   stroke-linecap="round"
                 ></circle>
-
-                <!-- Gauge Progress -->
                 <circle
                   cx="18"
                   cy="18"
@@ -115,8 +112,10 @@
           </div>
         </div>
       </div>
+      <Cardnotfound :content="content" v-else />
     </div>
     <div class="pt-4 pb-8 px-4 sm:px-8 lg:px-20">
+      <!-- Tabs Header (Centered) -->
       <Tabs :activeTab="activeTab" @update:activeTab="activeTab = $event" />
       <TabContent
         :activeTab="activeTab"
@@ -135,11 +134,22 @@ import { ref, onMounted, computed } from "vue";
 import Tabs from "~/components/Tabs.vue";
 import TabContent from "~/components/TabContent.vue";
 import axios from "axios";
+import { useRoute } from "vue-router";
+import Cardnotfound from "~/components/Cardnotfound.vue";
+
 const content = ref({});
 const activeTab = ref(0);
 const roomstay = ref(null);
 const detailRooms = ref(null);
+const route = useRoute();
 const tmpdetail = ref(null);
+
+const slug = route.params.slug || "";
+const id = slug.split("-").pop();
+const checkin = route.query.checkin;
+const checkout = route.query.checkout;
+const guest_per_room = route.query.guest_per_room;
+const number_of_room = route.query.number_of_room;
 
 const getContent = async () => {
   try {
@@ -147,7 +157,7 @@ const getContent = async () => {
       "https://project-technical-test-api.up.railway.app/property/content",
       {
         params: {
-          id: 9000248394,
+          id: id,
           language: "id-id",
           include: "room",
           inclcude: "general_info",
@@ -157,7 +167,7 @@ const getContent = async () => {
     content.value = Object.values(response.data)[0];
     useSeoMeta({
       title: content.value.name,
-      ogTitle: content.value.name,
+      ogTitle: route.query.title,
       description: content.value.name,
       ogDescription: content.value.name,
       ogImage: content.value.catalog.hero_image_url.lg,
@@ -179,25 +189,29 @@ const rooms = computed(() => {
   if (content.value) {
     const datacontent = Object.values(content.value.room || {});
     return datacontent.map((b) => ({
-      room_id: b.id,
+      room_id: b.id, // Pastikan ini sesuai dengan struktur data
       amenities: b.amenities ? Object.values(b.amenities) : [],
     }));
   }
   return [];
 });
+const onImageError = () => {
+  imageSrc.value =
+    "https://project-exterior-technical-test-app.up.railway.app/img/fallback-property.png";
+};
 
 const getRoom = async () => {
   try {
     const response = await axios.get(
-      "https://project-technical-test-api.up.railway.app/stay/availability/9000248394?checkin=2025-01-01&checkout=2025-01-02&guest_per_room=2&number_of_room=1&run_price_check=false",
+      `https://project-technical-test-api.up.railway.app/stay/availability/${id}`,
       {
-        // params: {
-        //   checkin: "2025-03-04",
-        //   checkout: "2025-03-08",
-        //   guest_per_room: 2,
-        //   number_of_room: 1,
-        //   run_price_check: false,
-        // },
+        params: {
+          checkin: checkin,
+          checkout: checkout,
+          guest_per_room: guest_per_room,
+          number_of_room: number_of_room,
+          run_price_check: false,
+        },
       }
     );
     const offers = response.data.offer_list;

@@ -1,4 +1,5 @@
 // nuxt.config.ts
+
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
@@ -21,6 +22,17 @@ export default defineNuxtConfig({
           href: 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap',
         },
       ],
+    },
+  },
+  vite: {
+    server: {
+      proxy: {
+        '/amenities': {
+          target: 'https://project-exterior-technical-test-app.up.railway.app',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/amenities/, '/amenities'),
+        },
+      },
     },
   },
 })

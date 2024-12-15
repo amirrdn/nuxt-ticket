@@ -1,17 +1,20 @@
 <template>
-  <div>
+  <div class="z-50 relative bg-white">
     <!-- Header tetap di atas dengan z-30 -->
-    <header class="fixed top-0 left-0 right-0 py-2 px-20">
+    <header class="fixed bg-white top-0 left-0 right-0 py-2 px-4 md:px-20">
       <!-- Top Header -->
-      <div class="container mx-auto flex justify-between items-center py-2 px-20">
+      <div
+        class="container max-sm:flex mx-auto flex flex-wrap justify-between items-center py-2 px-4 md:px-20"
+      >
         <img
           src="https://project-exterior-technical-test-app.up.railway.app/img/logo.png"
-          class="w-1/6"
+          class="hidden sm:block w-1/2 md:w-1/6 mb-2 md:mb-0 cursor-pointer"
+          @click="goToHome"
         />
-        <div class="flex items-center w-[60%]">
+        <div class="max-sm:flex-1 flex items-center w-full md:w-[60%] mb-2 md:mb-0">
           <button
             @click="toggleSearch"
-            class="btn btn-sm bg-slate-100 p-4 rounded-md flex items-center justify-center w-full text-center"
+            class="btn btn-sm bg-slate-100 p-4 max-sm:p-2 max-sm:pl-2 rounded-md flex items-center max-sm:justify-normal justify-center w-full text-center max-sm:truncate"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -25,21 +28,25 @@
                 d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"
               ></path>
             </svg>
-            Fairmont Jakarta
+            {{ titleHead }}
           </button>
         </div>
         <div class="space-x-4">
-          <button class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+          <button
+            class="bg-blue-600 text-white px-4 py-2 max-sm:-mt-1 max-sm:p-2 rounded-md hover:bg-blue-700"
+          >
             Sign in
           </button>
         </div>
       </div>
+      <!-- -->
+
       <div
         v-if="isSearchVisible"
-        class="search-wrapper fixed top-15 left-[12%] w-[90%] md:w-[77%] bg-white p-4 shadow-lg"
+        class="search-wrapper fixed top-[10%] left-[12%] w-[90%] md:w-[77%] bg-white p-4 shadow-lg z-50"
       >
-        <div class="flex items-center">
-          <div class="w-[48%]">
+        <div class="flex flex-wrap items-center">
+          <div class="w-full sm:w-[35%] mb-4 sm:mb-0">
             <div class="relative">
               <div
                 class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
@@ -77,7 +84,7 @@
                 <div
                   v-for="(item, index) in suggestions"
                   :key="index"
-                  @click="selectSuggestion(item.name)"
+                  @click="selectSuggestion(item)"
                   class="py-2 px-4 hover:bg-gray-200 cursor-pointer v-list v-select-list v-sheet theme--light theme--light"
                 >
                   <div class="mb-0 pa-2 v-list-item v-list-item--link theme--light">
@@ -124,6 +131,24 @@
 
                         <span
                           class="px-2 py-0 d-inline-flex flex-row flex-nowrap justify-start align-center"
+                          v-if="item.location_type === 'train_station'"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            role="img"
+                            aria-hidden="true"
+                            class="float-left text-green-600 w-5 text-sm relative top-1 fill-current"
+                          >
+                            <path
+                              d="M12,2C8,2 4,2.5 4,6V15.5A3.5,3.5 0 0,0 7.5,19L6,20.5V21H8.23L10.23,19H14L16,21H18V20.5L16.5,19A3.5,3.5 0 0,0 20,15.5V6C20,2.5 16.42,2 12,2M7.5,17A1.5,1.5 0 0,1 6,15.5A1.5,1.5 0 0,1 7.5,14A1.5,1.5 0 0,1 9,15.5A1.5,1.5 0 0,1 7.5,17M11,10H6V6H11V10M13,10V6H18V10H13M16.5,17A1.5,1.5 0 0,1 15,15.5A1.5,1.5 0 0,1 16.5,14A1.5,1.5 0 0,1 18,15.5A1.5,1.5 0 0,1 16.5,17Z"
+                            ></path>
+                          </svg>
+                          <small class="ml-2 text-green-500"> Train Station </small>
+                        </span>
+
+                        <span
+                          class="px-2 py-0 d-inline-flex flex-row flex-nowrap justify-start align-center"
                           v-if="item.location_type === 'property'"
                         >
                           <svg
@@ -154,10 +179,16 @@
               </div>
             </div>
           </div>
-          <div class="w-[30%] ps-2">
+          <!-- -->
+          <div class="w-full md:w-[30%] ps-2">
             <div class="relative">
               <!-- VueDatePicker input field -->
-              <VueDatePicker v-model="date" range multi-calendars>
+              <VueDatePicker
+                v-model="selectedDates"
+                range
+                multi-calendars
+                @update:modelValue="onDateSelect"
+              >
                 <template
                   #dp-input="{
                     value,
@@ -176,7 +207,7 @@
                     :value="formattedDates"
                     @input="onInput"
                     @blur="onBlur"
-                    class="peer block w-full px-4 py-3 text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600"
+                    class="peer block w-full px-4 py-3 text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600"
                   />
                 </template>
               </VueDatePicker>
@@ -189,8 +220,8 @@
               </label>
             </div>
           </div>
-
-          <div class="w-full sm:w-1/2 md:w-auto flex-shrink-1 ps-2">
+          <!-- -->
+          <div class="w-full sm:w-1/2 md:w-auto flex-shrink-0 ps-2">
             <div class="relative">
               <div
                 class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
@@ -210,7 +241,7 @@
               <input
                 type="search"
                 id="guest-room"
-                class="block px-10 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                class="block px-10 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                 placeholder=" "
                 @focus="onFocusRoom"
                 v-model="guestCountDisplay"
@@ -218,18 +249,20 @@
               />
               <label
                 for="floating_outlined"
-                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
-                >Guest & Room</label
+                class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
               >
+                Guest & Room
+              </label>
             </div>
           </div>
+          <!-- -->
           <div
             v-if="isFocused"
             @mouseleave="onBlurRoom"
-            class="w-full sm:w-1/2 md:w-auto flex-shrink-1 mb-6 absolute inset-y-0 right-1 top-20"
+            class="w-full sm:w-1/2 md:w-auto flex-shrink-0 mb-6 absolute inset-y-0 right-1 top-20"
           >
-            <div class="card-wrapper space-y-3">
-              <div class="card-inner bg-white shadow-md">
+            <div class="space-y-3">
+              <div class="bg-white shadow-md">
                 <!-- Kamar per Tamu -->
                 <div class="px-3 py-3 flex items-center justify-between">
                   <div class="flex items-center space-x-3">
@@ -237,90 +270,109 @@
                       type="button"
                       @click="decreaseGuestCount"
                       @blur="onBlurRoom"
-                      class="v-btn v-btn--fab v-btn--icon v-btn--round bg-gray-200 hover:bg-gray-300 rounded-full p-2"
+                      class="bg-gray-200 hover:bg-gray-300 rounded-full p-2"
                     >
-                      <span class="v-icon">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          class="w-5 h-5"
-                        >
-                          <path d="M19,13H5V11H19V13Z"></path>
-                        </svg>
-                      </span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        class="w-5 h-5"
+                      >
+                        <path d="M19,13H5V11H19V13Z"></path>
+                      </svg>
                     </button>
                     <div class="text-center">
                       <div class="font-semibold">Double Room</div>
                       <div>
-                        <span class="text-xl font-medium">{{ guestCount }}</span>
-                        <span class="text-sm text-gray-600">tamu/kamar</span>
+                        <span class="text-xl font-medium mr-1 text-blue-500">{{
+                          guestCount
+                        }}</span>
+                        <span class="text-sm text-gray-600">guests/room</span>
                       </div>
-                      <div class="text-sm mt-1 cursor-pointer text-blue-600">
-                        Bagaimana dengan anak-anak?
+                      <div class="text-sm mt-1 cursor-pointer text-gray-600">
+                        <span
+                          ><svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            role="img"
+                            aria-hidden="true"
+                            class="w-3 h-3 fill-current float-left m-1"
+                          >
+                            <path
+                              d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"
+                            ></path></svg
+                        ></span>
+                        <small>What about children?</small>
                       </div>
                     </div>
                     <button
                       type="button"
                       @click="increaseGuestCount"
-                      class="v-btn v-btn--fab v-btn--icon v-btn--round bg-gray-200 hover:bg-gray-300 rounded-full p-2"
+                      class="bg-gray-200 hover:bg-gray-300 rounded-full p-2"
                     >
-                      <span class="v-icon">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          class="w-5 h-5"
-                        >
-                          <path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z"></path>
-                        </svg>
-                      </span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        class="w-5 h-5"
+                      >
+                        <path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z"></path>
+                      </svg>
                     </button>
                   </div>
                 </div>
 
                 <!-- Bagian Jumlah Kamar -->
-                <!-- Kamar per Tamu -->
-                <div class="px-3 py-3 items-center">
-                  <div class="flex flex-wrap item-center justify-between mb-6 space-x-3">
+                <div class="px-3 py-3">
+                  <div class="flex flex-wrap items-center justify-between mb-6 space-x-3">
                     <button
                       type="button"
                       @click="decreaseRoomCount"
-                      class="v-btn v-btn--fab v-btn--icon v-btn--round bg-gray-200 hover:bg-gray-300 rounded-full p-2"
+                      class="bg-gray-200 hover:bg-gray-300 rounded-full p-2"
                     >
-                      <span class="v-icon">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          class="w-5 h-5"
-                        >
-                          <path d="M19,13H5V11H19V13Z"></path>
-                        </svg>
-                      </span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        class="w-5 h-5"
+                      >
+                        <path d="M19,13H5V11H19V13Z"></path>
+                      </svg>
                     </button>
                     <div class="text-center text-sm font-medium">
-                      <span class="text-xl">{{ roomCount }}</span> Kamar
+                      <span class="text-xl text-blue-500">{{ roomCount }}</span> Room
                     </div>
                     <button
                       type="button"
                       @click="increaseRoomCount"
-                      class="v-btn v-btn--fab v-btn--icon v-btn--round bg-gray-200 hover:bg-gray-300 rounded-full p-2"
+                      class="bg-gray-200 hover:bg-gray-300 rounded-full p-2"
                     >
-                      <span class="v-icon">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          class="w-5 h-5"
-                        >
-                          <path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z"></path>
-                        </svg>
-                      </span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        class="w-5 h-5"
+                      >
+                        <path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z"></path>
+                      </svg>
                     </button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <button @click="toggleSearch" class="ml-4 bg-gray-300 p-2 rounded-md">
-            Close
+          <button
+            @click="goToPages"
+            class="ml-4 bg-blue-600 p-2 text-white rounded-md flex items-center space-x-2"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              role="img"
+              aria-hidden="true"
+              class="w-4 h-4 fill-current"
+            >
+              <path
+                d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"
+              ></path>
+            </svg>
+            <span>Search</span>
           </button>
         </div>
       </div>
@@ -339,16 +391,23 @@ import axios from "axios";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import { format } from "date-fns";
+import { useRouter } from "vue-router";
 
 const isSearchVisible = ref(false);
 const isDropdownVisible = ref(false);
-const searchQuery = ref("jakarta");
+const searchQuery = ref("Fairmont Jakarta");
 const suggestions = ref([]);
-const dates = ref([]);
+const selectedDates = ref([]);
 const guestCount = ref(2);
 const roomCount = ref(2);
 const isFocused = ref(false);
 const guestCountDisplay = ref(`${guestCount.value} Guest`);
+const checkinDate = ref(null);
+const checkoutDate = ref(null);
+const queriesParms = ref("fairmont-jakarta-9000248394");
+const router = useRouter();
+const id = ref(null);
+const titleHead = ref("Fairmont Jakarta");
 
 watch([guestCount, roomCount], ([newGuestCount, newRoomCount]) => {
   let textguest = "";
@@ -367,41 +426,73 @@ watch([guestCount, roomCount], ([newGuestCount, newRoomCount]) => {
 const setTodayAndTomorrow = () => {
   const today = new Date();
   const tomorrow = new Date();
-  tomorrow.setDate(today.getDate() + 1); // Tambahkan 1 hari untuk besok
+  tomorrow.setDate(today.getDate() + 1);
+  checkinDate.value = format(new Date(today), "yyyy-MM-dd");
+  checkoutDate.value = format(new Date(tomorrow), "yyyy-MM-dd");
 
   // Set tanggal yang dipilih menjadi hari ini dan besok
-  dates.value = [today, tomorrow];
+  selectedDates.value = [today, tomorrow];
 };
 const formattedDates = computed(() => {
-  if (dates.value.length > 0) {
-    const startDate = format(dates.value[0], "d"); // Format tanggal pertama tanpa tahun
-    const endDate = format(dates.value[dates.value.length - 1], "d MMMM yyyy"); // Format tanggal terakhir dengan tahun
-    return `${startDate} - ${endDate}`; // Gabungkan dengan tanda hubung
+  if (selectedDates.value.length > 0) {
+    const startDate = format(selectedDates.value[0], "d");
+    const endDate = format(
+      selectedDates.value[selectedDates.value.length - 1],
+      "d MMMM yyyy"
+    );
+    return `${startDate} - ${endDate}`;
   }
   return "";
 });
+const onDateSelect = (dates) => {
+  dates.forEach((date, index) => {
+    if (index === 0) {
+      checkinDate.value = format(new Date(date), "yyyy-MM-dd");
+    } else if (index === 1) {
+      checkoutDate.value = format(new Date(date), "yyyy-MM-dd");
+    }
+  });
+};
 
 const fetchSuggestions = async () => {
   if (searchQuery.value.trim() === "") {
-    suggestions.value = []; // Kosongkan daftar jika tidak ada query
+    suggestions.value = [];
     return;
   }
 
   try {
-    const response = await axios.get(
+    // Mengambil data properti pertama
+    const responseProperty = await axios.get(
+      "https://project-technical-test-api.up.railway.app/property/search",
+      {
+        params: {
+          query: searchQuery.value,
+          language: "id-id",
+        },
+      }
+    );
+
+    // Mengambil data lokasi kedua
+    const responseLocation = await axios.get(
       "https://project-technical-test-api.up.railway.app/location/search",
       {
         params: {
           query: searchQuery.value,
-          enum: "id-id",
+          language: "id-id",
         },
       }
     );
-    suggestions.value = response.data; // Menyimpan data lokasi ke dalam suggestions
+
+    const combinedSuggestions = [...responseProperty.data, ...responseLocation.data];
+
+    suggestions.value = combinedSuggestions.filter(
+      (value, index, self) => index === self.findIndex((t) => t.id === value.id)
+    );
   } catch (error) {
     console.error("Error fetching suggestions:", error);
   }
 };
+
 const onFocus = () => {
   isDropdownVisible.value = true;
   isFocused.value = false;
@@ -433,8 +524,11 @@ const decreaseRoomCount = () => {
   if (roomCount.value > 1) roomCount.value--;
 };
 const selectSuggestion = (item) => {
-  searchQuery.value = item; // Mengubah nilai pencarian menjadi item yang dipilih
-  isDropdownVisible.value = false; // Menutup dropdown setelah pemilihan
+  isDropdownVisible.value = false;
+  queriesParms.value = item.slug;
+  id.value = item.id;
+  searchQuery.value = `${item.name}, ${item.name_suffix}`;
+  titleHead.value = item.name;
 };
 const cleanHTML = (text) => {
   const doc = new DOMParser().parseFromString(text, "text/html");
@@ -442,6 +536,23 @@ const cleanHTML = (text) => {
 };
 const toggleSearch = () => {
   isSearchVisible.value = !isSearchVisible.value;
+};
+const goToPages = () => {
+  isSearchVisible.value = !isSearchVisible.value;
+  const routeParams = {
+    checkin: checkinDate.value,
+    checkout: checkoutDate.value,
+    guest_per_room: guestCount.value,
+    number_of_room: roomCount.value,
+    title: titleHead.value,
+  };
+  router.push({
+    path: `/stay/${queriesParms.value}`,
+    query: routeParams,
+  });
+};
+const goToHome = () => {
+  router.push("/");
 };
 onMounted(() => {
   setTodayAndTomorrow();
@@ -453,7 +564,7 @@ onMounted(() => {
   z-index: 9;
 }
 .search-wrapper {
-  z-index: 20; /* Make sure search wrapper appears above overlay */
+  z-index: 20;
 }
 .dropdown {
   /* top: 100%; */

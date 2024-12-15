@@ -10,11 +10,17 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@mdi/font": "^7.4.47",
+    "@nuxt/content": "^2.13.4",
+    "@nuxt/http": "^0.6.4",
+    "@nuxtjs/seo": "^2.0.2",
     "@vuepic/vue-datepicker": "^10.0.0",
     "axios": "^1.7.9",
     "date-fns": "^4.1.0",
     "flowbite": "^2.5.2",
     "nuxt": "^3.14.1592",
+    "nuxt-robots": "^2.0.1",
+    "nuxt-sitemap": "^1.0.0",
     "vue": "latest",
     "vue-router": "latest"
   },
