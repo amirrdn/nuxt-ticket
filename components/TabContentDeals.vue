@@ -185,6 +185,7 @@ const isModalOpen = ref(false);
 const currentItems = ref(null);
 const currentImageIndex = ref(0);
 const currentImg = ref(null);
+const config = useRuntimeConfig();
 
 const openImageModal = (value, imageUrl, index) => {
   currentItems.value = value;
@@ -213,7 +214,14 @@ const openImageModal = (value, imageUrl, index) => {
 };
 const transfromAmentities = async (data) => {
   try {
-    await axios.post(`/amenities`, data).then((response) => {
+    const nodeEnv = config.public.nodeEnv;
+    let url;
+    if (nodeEnv === "development") {
+      url = "/amenities";
+    } else {
+      url = "https://project-exterior-technical-test-app.up.railway.app/amenities";
+    }
+    await axios.post(url, data).then((response) => {
       if (response.data) {
         const amenities = response.data.map((b) => ({
           ...b,
