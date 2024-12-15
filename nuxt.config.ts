@@ -27,12 +27,12 @@ export default defineNuxtConfig({
   vite: {
     server: {
       proxy: {
-          '/amenities': {
-            target: 'https://project-exterior-technical-test-app.up.railway.app',
-            changeOrigin: true,
-            rewrite: (path) => path.replace(/^\/amenities/, '/amenities'),
-          },
+        '/amenities': {
+          target: 'https://project-exterior-technical-test-app.up.railway.app',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/amenities/, '/amenities'),
         },
+      }
     },
   },
   runtimeConfig: {
