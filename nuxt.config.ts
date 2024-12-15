@@ -26,15 +26,15 @@ export default defineNuxtConfig({
   },
   vite: {
     server: {
-      proxy: process.env.NODE_ENV === 'production'
-        ? {}
-        : {
-            '/amenities': {
-              target: 'https://project-exterior-technical-test-app.up.railway.app',
-              changeOrigin: true,
-              rewrite: (path) => path.replace(/^\/amenities/, '/amenities'),
-            },
-          },
+      proxy: {
+        '/amenities': {
+          target: process.env.NODE_ENV === 'production'
+            ? 'https://project-exterior-technical-test-app.up.railway.app' 
+            : 'https://project-exterior-technical-test-app.up.railway.app',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/amenities/, '/amenities'),
+        },
+      },
     },
   },
 })
