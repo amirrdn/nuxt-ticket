@@ -215,6 +215,7 @@ const openImageModal = (value, imageUrl, index) => {
 const transfromAmentities = async (data) => {
   try {
     const nodeEnv = config.public.nodeEnv;
+    console.log(nodeEnv);
     let url;
     if (nodeEnv === "development") {
       url = "/amenities";
