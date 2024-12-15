@@ -43,7 +43,7 @@
 
       <div
         v-if="isSearchVisible"
-        class="search-wrapper fixed top-[10%] left-[12%] w-[90%] md:w-[77%] bg-white p-4 shadow-lg z-50"
+        class="search-wrapper fixed top-[10%] left-[12%] w-[90%] max-sm:left-0 max-sm:w-full md:w-[77%] bg-white p-4 shadow-lg z-30"
       >
         <div class="flex flex-wrap items-center">
           <div class="w-full sm:w-[35%] mb-4 sm:mb-0">
@@ -71,6 +71,7 @@
                 @blur="onBlur"
                 v-model="searchQuery"
                 @input="fetchSuggestions"
+                autocomplete="off"
               />
               <label
                 for="floating_outlined"
@@ -78,14 +79,14 @@
                 >Where are you going?</label
               >
               <div
-                class="px-2 py-0 rounded-lg elevation-3 max-h-80 overflow-y-auto w-full absolute bg-white"
+                class="px-2 py-0 rounded-lg elevation-3 max-h-80 overflow-y-auto w-full absolute bg-white z-50"
                 v-if="isDropdownVisible"
               >
                 <div
                   v-for="(item, index) in suggestions"
                   :key="index"
                   @click="selectSuggestion(item)"
-                  class="py-2 px-4 hover:bg-gray-200 cursor-pointer v-list v-select-list v-sheet theme--light theme--light"
+                  class="py-2 px-4 hover:bg-gray-200 cursor-pointer"
                 >
                   <div class="mb-0 pa-2 v-list-item v-list-item--link theme--light">
                     <div class="v-list-item__content pa-0">
@@ -180,14 +181,15 @@
             </div>
           </div>
           <!-- -->
-          <div class="w-full md:w-[30%] ps-2">
-            <div class="relative">
+          <div class="w-full md:w-[30%] max-sm:w-full ps-2 max-sm:mb-4 max-sm:ps-0">
+            <div class="relative z-30">
               <!-- VueDatePicker input field -->
               <VueDatePicker
                 v-model="selectedDates"
                 range
                 multi-calendars
                 @update:modelValue="onDateSelect"
+                class="max-sm:block"
               >
                 <template
                   #dp-input="{
@@ -207,21 +209,23 @@
                     :value="formattedDates"
                     @input="onInput"
                     @blur="onBlur"
-                    class="peer block w-full px-4 py-3 text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600"
+                    class="peer z-30 block w-full px-4 py-3 text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600"
                   />
                 </template>
               </VueDatePicker>
               <!-- Floating label -->
               <label
                 for="floating_outlined"
-                class="absolute left-2 -top-3 text-lg text-gray-500 dark:text-gray-400 duration-300 transform scale-75 origin-[0] bg-white dark:bg-gray-900 px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-1/2 peer-focus:scale-75 peer-focus:-translate-y-4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500"
+                class="absolute z-30 left-2 -top-3 text-lg text-gray-500 dark:text-gray-400 duration-300 transform scale-75 origin-[0] bg-white dark:bg-gray-900 px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-1/2 peer-focus:scale-75 peer-focus:-translate-y-4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500"
               >
                 Check In - Check Out
               </label>
             </div>
           </div>
           <!-- -->
-          <div class="w-full sm:w-1/2 md:w-auto flex-shrink-0 ps-2">
+          <div
+            class="w-full sm:w-1/2 md:w-auto flex-shrink-0 ps-2 max-sm:ps-0 max-sm:mb-4"
+          >
             <div class="relative">
               <div
                 class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
@@ -259,13 +263,13 @@
           <div
             v-if="isFocused"
             @mouseleave="onBlurRoom"
-            class="w-full sm:w-1/2 md:w-auto flex-shrink-0 mb-6 absolute inset-y-0 right-1 top-20"
+            class="w-full md:w-auto flex-shrink-0 mb-6 absolute inset-y-0 right-[13%] max-sm:righ-1 max-sm:w-full max-sm:left-0 max-sm:top-48 top-20"
           >
             <div class="space-y-3">
               <div class="bg-white shadow-md">
                 <!-- Kamar per Tamu -->
-                <div class="px-3 py-3 flex items-center justify-between">
-                  <div class="flex items-center space-x-3">
+                <div class="px-3 py-3">
+                  <div class="flex items-center space-x-3 justify-between max-sm:mb-4">
                     <button
                       type="button"
                       @click="decreaseGuestCount"
@@ -357,23 +361,25 @@
               </div>
             </div>
           </div>
-          <button
-            @click="goToPages"
-            class="ml-4 bg-blue-600 p-2 text-white rounded-md flex items-center space-x-2"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              role="img"
-              aria-hidden="true"
-              class="w-4 h-4 fill-current"
+          <div class="flex items-center max-sm:w-full max-sm:justify-end">
+            <button
+              @click="goToPages"
+              class="ml-4 bg-blue-600 flex space-x-2 items-center p-2 text-white rounded-md"
             >
-              <path
-                d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"
-              ></path>
-            </svg>
-            <span>Search</span>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                role="img"
+                aria-hidden="true"
+                class="w-4 h-4 fill-current"
+              >
+                <path
+                  d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"
+                ></path>
+              </svg>
+              <span>Search</span>
+            </button>
+          </div>
         </div>
       </div>
       <div
