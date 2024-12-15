@@ -1,10 +1,12 @@
+// nuxt.config.ts
+
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
-  devtools: { enabled: true },
-  pages: true, // Aktifkan fitur auto-import untuk folder `pages`
+  devtools: { enabled: process.env.NODE_ENV === 'development' },
+  pages: true,
   dir: {
-    pages: './pages', // Direktori default untuk halaman
-    layouts: './layouts', // Direktori default untuk layout
+    pages: './pages',
+    layouts: './layouts',
   },
   postcss: {
     plugins: {
@@ -24,18 +26,15 @@ export default defineNuxtConfig({
   },
   vite: {
     server: {
-      proxy: process.env.NODE_ENV !== 'production' ? {
-        '/amenities': {
-          target: 'https://project-exterior-technical-test-app.up.railway.app',
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/amenities/, '/amenities'),
-        },
-      } : undefined,
+      proxy: process.env.NODE_ENV === 'production'
+        ? {}
+        : {
+            '/amenities': {
+              target: 'https://project-exterior-technical-test-app.up.railway.app',
+              changeOrigin: true,
+              rewrite: (path) => path.replace(/^\/amenities/, '/amenities'),
+            },
+          },
     },
   },
-  runtimeConfig: {
-    public: {
-      apiBase: process.env.API_BASE || 'https://project-exterior-technical-test-app.up.railway.app',
-    },
-  },
-});
+})
