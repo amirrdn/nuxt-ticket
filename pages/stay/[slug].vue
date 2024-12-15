@@ -189,7 +189,7 @@ const rooms = computed(() => {
   if (content.value) {
     const datacontent = Object.values(content.value.room || {});
     return datacontent.map((b) => ({
-      room_id: b.id, // Pastikan ini sesuai dengan struktur data
+      room_id: b.id,
       amenities: b.amenities ? Object.values(b.amenities) : [],
     }));
   }

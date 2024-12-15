@@ -199,7 +199,6 @@ const openImageModal = (value, imageUrl, index) => {
         name: item.name,
       };
 
-      // Menambahkan 'categories' hanya jika ada isinya
       if (item.categories && item.categories.length > 0) {
         amenity.categories = item.categories;
       }

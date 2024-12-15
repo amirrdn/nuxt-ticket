@@ -1,5 +1,3 @@
-// nuxt.config.ts
-
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
@@ -26,13 +24,18 @@ export default defineNuxtConfig({
   },
   vite: {
     server: {
-      proxy: {
+      proxy: process.env.NODE_ENV !== 'production' ? {
         '/amenities': {
           target: 'https://project-exterior-technical-test-app.up.railway.app',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/amenities/, '/amenities'),
         },
-      },
+      } : undefined,
     },
   },
-})
+  runtimeConfig: {
+    public: {
+      apiBase: process.env.API_BASE || 'https://project-exterior-technical-test-app.up.railway.app',
+    },
+  },
+});
